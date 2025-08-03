@@ -3,7 +3,6 @@ package song.sj.dto.member;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import song.sj.entity.Address;
 
 @Data
 @NoArgsConstructor

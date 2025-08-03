@@ -4,7 +4,6 @@ import jakarta.persistence.Embedded;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import song.sj.TimeStamp;
-import song.sj.entity.Address;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
