@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
+import song.sj.entity.Address;
 import song.sj.enums.Role;
 
 @Getter

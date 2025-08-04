@@ -9,10 +9,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @EnableJpaAuditing // Auditing 활성화
 @SpringBootApplication(/*exclude = SecurityAutoConfiguration.class*/)
-public class SjApplication {
+public class SjMemberServiceApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SjApplication.class, args);
+		SpringApplication.run(SjMemberServiceApplication.class, args);
 	}
 
 	@Bean

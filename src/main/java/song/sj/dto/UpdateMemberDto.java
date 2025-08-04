@@ -3,6 +3,7 @@ package song.sj.dto;
 import jakarta.persistence.Embedded;
 import lombok.Data;
 import song.sj.TimeStamp;
+import song.sj.entity.Address;
 
 import java.util.Objects;
 

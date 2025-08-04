@@ -1,6 +1,7 @@
 package song.sj.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,6 +17,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -26,20 +28,26 @@ public class MemberLoginServiceImpl implements MemberLoginService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
-    @Override
-    public Map<String, Object> login(LoginDto loginDto) {
+    private String getMemberEmail(Long memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(
+                () -> new IllegalArgumentException("존재하지 않는 ID 입니다."));
 
-
-        Optional<Member> findMember = memberRepository.findByEmail(loginDto.getEmail());
-
-        Member member = emailPasswordVerification(loginDto, findMember);
-
-        return createTokenAndStoringTokenInRedis(member);
+        return member.getEmail();
     }
 
-    @Override
-    public void logout() {
-        
+    private Member emailPasswordVerification(LoginDto loginDto, Optional<Member> findMember) {
+
+        if (findMember.isEmpty()) {
+            throw new IllegalArgumentException("email 또는 password 가 일치하지 않습니다.");
+        }
+
+        Member member = findMember.get();
+
+        if (!passwordEncoder.matches(loginDto.getPassword(), member.getPassword())) {
+            throw new IllegalArgumentException("email 또는 password 가 일치하지 않습니다.");
+        }
+
+        return member;
     }
 
     private Map<String, Object> createTokenAndStoringTokenInRedis(Member member) {
@@ -54,20 +62,25 @@ public class MemberLoginServiceImpl implements MemberLoginService {
         return loginInfo;
     }
 
-    private Member emailPasswordVerification(LoginDto loginDto, Optional<Member> findMember) {
+    @Override
+    public Map<String, Object> login(LoginDto loginDto) {
 
-        boolean check = true;
 
-        if (findMember.isEmpty()) {
-            check = false;
-        }
-        if (passwordEncoder.matches(loginDto.getPassword(), findMember.get().getPassword())) {
-            check = false;
-        }
-        if (!check) {
-            throw new IllegalArgumentException("email 또는 password 가 일치하지 않습니다.");
-        }
+        Optional<Member> findMember = memberRepository.findByEmail(loginDto.getEmail());
 
-        return findMember.get();
+        Member member = emailPasswordVerification(loginDto, findMember);
+
+        return createTokenAndStoringTokenInRedis(member);
+    }
+
+    @Override
+    public void logout(Long memberId) {
+
+        String redisKey = getMemberEmail(memberId);
+
+        if (redisTemplate.hasKey(redisKey)) {
+            redisTemplate.delete(redisKey);
+            log.info("로그아웃 - redis 에서 refresh token 삭제: {}", redisKey);
+        }
     }
 }

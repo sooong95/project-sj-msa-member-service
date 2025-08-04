@@ -9,36 +9,36 @@ import song.sj.dto.Result;
 import song.sj.dto.UpdateMemberDto;
 import song.sj.dto.member.MemberSearchDto;
 import song.sj.service.MemberQueryService;
-import song.sj.service.MemberService;
+import song.sj.service.MemberServiceImpl;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/userInfo")
+@RequestMapping("/memberInfo")
 public class MemberInfoController {
 
-    private final MemberService memberService;
+    private final MemberServiceImpl memberService;
     private final MemberQueryService memberQueryService;
 
     @PatchMapping
-    public ResponseEntity<String> updateMember(@RequestBody @Valid UpdateMemberDto updateMemberDto) {
+    public ResponseEntity<String> updateMember(@RequestHeader("X-User-Id") Long memberId, @RequestBody @Valid UpdateMemberDto updateMemberDto) {
 
-        memberService.updateMember(updateMemberDto);
+        memberService.updateMember(memberId, updateMemberDto);
         return new ResponseEntity<>("회원 정보가 수정 되었습니다.", HttpStatus.OK);
     }
 
     @DeleteMapping
-    public ResponseEntity<String> deleteMember(String password) {
+    public ResponseEntity<String> deleteMember(@RequestHeader("X-User-Id") Long memberId, String password) {
 
-        memberService.deleteMember(password);
+        memberService.deleteMember(memberId, password);
 
         return new ResponseEntity<>("회원 탈퇴 완료", HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<MemberSearchDto> findMember() {
-        return new ResponseEntity<>((MemberSearchDto) memberService.findMember(), HttpStatus.OK);
+    public ResponseEntity<MemberSearchDto> findMember(@RequestHeader("X-User-Id") Long memberId) {
+        return new ResponseEntity<>((MemberSearchDto) memberService.findMember(memberId), HttpStatus.OK);
     }
 
     @GetMapping("/all")

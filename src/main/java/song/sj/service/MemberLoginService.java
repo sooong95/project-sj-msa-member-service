@@ -8,5 +8,7 @@ public interface MemberLoginService {
 
     Map<String, Object> login(LoginDto loginDto);
 
-    void logout();
+    void logout(Long memberId);
+
+    Map<String, Object> reissueAccessToken();
 }

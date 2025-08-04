@@ -9,7 +9,7 @@ import song.sj.dto.Result;
 import song.sj.dto.UpdateShopMemberDto;
 import song.sj.dto.member.ShopMemberSearchDto;
 import song.sj.service.MemberQueryService;
-import song.sj.service.MemberService;
+import song.sj.service.MemberServiceImpl;
 
 import java.util.List;
 
@@ -18,19 +18,20 @@ import java.util.List;
 @RequestMapping("/shop/userInfo")
 public class ShopMemberRUDController {
 
-    private final MemberService memberService;
+    private final MemberServiceImpl memberService;
     private final MemberQueryService memberQueryService;
 
     @PatchMapping
-    public ResponseEntity<String> updateShopMember(@RequestBody @Valid UpdateShopMemberDto dto) {
+    public ResponseEntity<String> updateShopMember(@RequestHeader("X-User-Id") Long memberId,
+                                                   @RequestBody @Valid UpdateShopMemberDto dto) {
 
-        memberService.updateShopMember(dto);
+        memberService.updateShopMember(memberId, dto);
         return new ResponseEntity<>("회원 정보가 수정 되었습니다.", HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<ShopMemberSearchDto> findMember() {
-        return new ResponseEntity<>((ShopMemberSearchDto) memberService.findMember(), HttpStatus.OK);
+    public ResponseEntity<ShopMemberSearchDto> findShopMember(@RequestHeader("X-User-Id") Long memberId) {
+        return new ResponseEntity<>((ShopMemberSearchDto) memberService.findMember(memberId), HttpStatus.OK);
     }
 
     @GetMapping("/all")

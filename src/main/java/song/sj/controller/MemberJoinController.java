@@ -7,17 +7,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import song.sj.dto.member.MemberJoinDto;
 import song.sj.dto.member.ShopMemberJoinDto;
-import song.sj.service.MemberService;
+import song.sj.service.MemberServiceImpl;
 
 import static org.springframework.http.HttpStatus.CREATED;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/join")
+@RequestMapping("/member/join")
 public class MemberJoinController {
 
-    private final MemberService memberService;
+    private final MemberServiceImpl memberService;
 
     @PostMapping
     public ResponseEntity<String> save(@Valid @RequestBody MemberJoinDto memberJoinDto) {

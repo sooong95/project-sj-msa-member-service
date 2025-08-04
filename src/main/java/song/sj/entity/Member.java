@@ -5,7 +5,6 @@ import jakarta.validation.Valid;
 import lombok.*;
 import org.springframework.util.StringUtils;
 import song.sj.TimeStamp;
-import song.sj.entity.item.Item;
 import song.sj.enums.Role;
 
 import java.util.ArrayList;
@@ -54,28 +53,22 @@ public class Member extends TimeStamp {
     private int wishlistCount = 0;
 
     @Builder.Default
-    @OneToMany(mappedBy = "member")
-    List<Item> items = new ArrayList<>();
+    private List<Long> itemsId = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "member")
-    private List<Shop> shopList = new ArrayList<>();
+    private List<Long> shopIdList = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "member")
-    private List<Review> reviewList = new ArrayList<>();
+    private List<Long> reviewIdList = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "member")
-    private List<Wishlist> wishlists = new ArrayList<>();
+    private List<Long> wishlistsId = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "member")
-    private List<Payment> paymentList = new ArrayList<>();
+    private List<Long> paymentIdList = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "member")
-    private List<Bill> billList = new ArrayList<>();
+    private List<Long> billIdList = new ArrayList<>();
 
     public void transPassword(String hashPassword) {
         this.password = hashPassword;
@@ -93,6 +86,10 @@ public class Member extends TimeStamp {
         this.email = email;
     }
 
+    public void changeAddress(Address address) {
+        if (Objects.nonNull(address)) this.address = address;
+    }
+
     public void changeBusinessRegistrationNumber(String businessRegistrationNumber) {
         if (StringUtils.hasText(businessRegistrationNumber))
             this.businessRegistrationNumber = businessRegistrationNumber;
@@ -100,10 +97,6 @@ public class Member extends TimeStamp {
 
     public void changeRole(Role role) {
         this.role = role;
-    }
-
-    public void changeAddress(Address address) {
-        if (Objects.nonNull(address)) this.address = address;
     }
 
     public void reviewCount() {
