@@ -1,5 +1,6 @@
 package song.sj.service;
 
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -8,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import song.sj.dto.LoginDto;
+import song.sj.dto.MemberRefreshTokenDto;
 import song.sj.entity.Member;
 import song.sj.jwt.JwtTokenProvider;
 import song.sj.repository.MemberRepository;
@@ -52,11 +54,11 @@ public class MemberLoginServiceImpl implements MemberLoginService {
 
     private Map<String, Object> createTokenAndStoringTokenInRedis(Member member) {
         Map<String, Object> loginInfo = new HashMap<>();
-        String token = jwtTokenProvider.createToken(member.getId().toString(), member.getRole().toString());
+        String token = jwtTokenProvider.createToken(member.getEmail(), member.getRole().toString());
         String refreshToken = jwtTokenProvider.createRefreshToken(member.getEmail(), member.getRole().toString());
         redisTemplate.opsForValue().set(member.getEmail(), refreshToken, 100, TimeUnit.DAYS);
 
-        loginInfo.put("id", member.getId());
+        loginInfo.put("id", member.getEmail());
         loginInfo.put("token", token);
         loginInfo.put("refreshToken", refreshToken);
         return loginInfo;
@@ -74,13 +76,33 @@ public class MemberLoginServiceImpl implements MemberLoginService {
     }
 
     @Override
-    public void logout(Long memberId) {
+    public void logout(String email) {
 
-        String redisKey = getMemberEmail(memberId);
-
-        if (redisTemplate.hasKey(redisKey)) {
-            redisTemplate.delete(redisKey);
-            log.info("로그아웃 - redis 에서 refresh token 삭제: {}", redisKey);
+        if (redisTemplate.hasKey(email)) {
+            redisTemplate.delete(email);
+            log.info("로그아웃 - redis 에서 refresh token 삭제: {}", email);
         }
+    }
+
+    @Override
+    public Map<String, Object> reissueAccessToken(MemberRefreshTokenDto memberRefreshTokenDto) {
+
+        Map<String, Object> newToken = new HashMap<>();
+
+        Claims claims = jwtTokenProvider.getClaims(memberRefreshTokenDto);
+
+        Object refreshToken = redisTemplate.opsForValue().get(claims.getSubject());
+
+        log.info("보내온 refresh token 정보 = {}", memberRefreshTokenDto.getRefreshToken());
+        log.info("redis 에 저장된 refresh token = {}", refreshToken);
+
+        if (refreshToken == null || !refreshToken.equals(memberRefreshTokenDto.getRefreshToken())) {
+            throw new IllegalArgumentException("존재하지 않는 토큰 입니다");
+        }
+
+        String token = jwtTokenProvider.createToken(claims.getSubject(), claims.get("role").toString());
+        newToken.put("token", token);
+
+        return newToken;
     }
 }

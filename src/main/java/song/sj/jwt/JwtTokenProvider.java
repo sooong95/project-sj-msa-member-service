@@ -1,11 +1,13 @@
 package song.sj.jwt;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtParserBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import song.sj.dto.MemberRefreshTokenDto;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
@@ -63,6 +65,11 @@ public class JwtTokenProvider {
         return token;
     }
 
-
-
+    public Claims getClaims(MemberRefreshTokenDto memberRefreshTokenDto) {
+        return Jwts.parserBuilder()
+                .setSigningKey(this.secretKeyRt)
+                .build()
+                .parseClaimsJws(memberRefreshTokenDto.getRefreshToken())
+                .getBody();
+    }
 }

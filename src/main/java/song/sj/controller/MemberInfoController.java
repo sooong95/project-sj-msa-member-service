@@ -22,23 +22,23 @@ public class MemberInfoController {
     private final MemberQueryService memberQueryService;
 
     @PatchMapping
-    public ResponseEntity<String> updateMember(@RequestHeader("X-User-Id") Long memberId, @RequestBody @Valid UpdateMemberDto updateMemberDto) {
+    public ResponseEntity<String> updateMember(@RequestHeader("X-User-Id") String email, @RequestBody @Valid UpdateMemberDto updateMemberDto) {
 
-        memberService.updateMember(memberId, updateMemberDto);
+        memberService.updateMember(email, updateMemberDto);
         return new ResponseEntity<>("회원 정보가 수정 되었습니다.", HttpStatus.OK);
     }
 
     @DeleteMapping
-    public ResponseEntity<String> deleteMember(@RequestHeader("X-User-Id") Long memberId, String password) {
+    public ResponseEntity<String> deleteMember(@RequestHeader("X-User-Id") String email, String password) {
 
-        memberService.deleteMember(memberId, password);
+        memberService.deleteMember(email, password);
 
         return new ResponseEntity<>("회원 탈퇴 완료", HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<MemberSearchDto> findMember(@RequestHeader("X-User-Id") Long memberId) {
-        return new ResponseEntity<>((MemberSearchDto) memberService.findMember(memberId), HttpStatus.OK);
+    public ResponseEntity<MemberSearchDto> findMember(@RequestHeader("X-User-Id") String email) {
+        return new ResponseEntity<>((MemberSearchDto) memberService.findMember(email), HttpStatus.OK);
     }
 
     @GetMapping("/all")

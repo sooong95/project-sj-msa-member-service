@@ -11,13 +11,11 @@ public interface MemberService {
 
     void shopMemberSave(ShopMemberJoinDto dto);
 
-    Member findMember(String email);
+    void updateMember(String email, UpdateMemberDto dto);
 
-    void updateMember(Long memberId, UpdateMemberDto dto);
+    void updateShopMember(String email, UpdateShopMemberDto dto);
 
-    void updateShopMember(Long memberId, UpdateShopMemberDto dto);
+    void deleteMember(String email, String password);
 
-    void deleteMember(Long memberId, String password);
-
-    MemberInfo findMember(Long memberId);
+    MemberInfo findMember(String email);
 }

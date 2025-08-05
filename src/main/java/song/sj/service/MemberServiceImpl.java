@@ -22,11 +22,6 @@ public class MemberServiceImpl implements MemberService {
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
 
-    // requestHeader 로 코드 교체 해야함
-    private Member getFindMember(Long memberId) {
-        return memberRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 ID 입니다."));
-    }
-
     @Transactional
     public void memberSave(MemberJoinDto dto) {
 
@@ -59,14 +54,14 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.existsByEmail(email);
     }
 
-    public Member findMember(String email) {
+    public Member getFindMember(String email) {
         return memberRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("없는 email 입니다."));
     }
 
     @Transactional
-    public void updateMember(Long memberId, UpdateMemberDto dto) {
+    public void updateMember(String email, UpdateMemberDto dto) {
 
-        Member findMember = getFindMember(memberId);
+        Member findMember = getFindMember(email);
 
         findMember.changeUsername(dto.getUsername());
         findMember.changePassword(dto.getNewPassword());
@@ -74,9 +69,9 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Transactional
-    public void updateShopMember(Long memberId, UpdateShopMemberDto dto) {
+    public void updateShopMember(String email, UpdateShopMemberDto dto) {
 
-        Member findMember = getFindMember(memberId);
+        Member findMember = getFindMember(email);
 
         findMember.changeUsername(dto.getUsername());
         findMember.changePassword(dto.getNewPassword());
@@ -85,9 +80,9 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Transactional
-    public void deleteMember(Long memberId, String password) {
+    public void deleteMember(String email, String password) {
 
-        Member findMember = getFindMember(memberId);
+        Member findMember = getFindMember(email);
 
         if (findMember.getPassword().equals(password)) {
             memberRepository.delete(findMember);
@@ -96,8 +91,8 @@ public class MemberServiceImpl implements MemberService {
         }
     }
 
-    public MemberInfo findMember(Long memberId) {
-        Member member = getFindMember(memberId);
+    public MemberInfo findMember(String email) {
+        Member member = getFindMember(email);
 
         if (member.getRole().equals(Role.ROLE_MEMBER))
             return new MemberSearchDto(member.getId(), member.getUsername(), member.getEmail(), member.getAddress());
