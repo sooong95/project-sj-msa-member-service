@@ -33,5 +33,48 @@ public class InitialDataLoader implements CommandLineRunner {
                 .build();
 
         memberRepository.save(member);
+
+        if (memberRepository.findByEmail("shop-test@gmail.com").isPresent()) return;
+
+        Member shopMember = Member.builder()
+                .email("shop-test@gmail.com")
+                .password(passwordEncoder.encode("password"))
+                .role(Role.ROLE_SHOP)
+                .address(Address.builder()
+                        .city("서울시")
+                        .street("1번가")
+                        .zipcode("ㅇㅇ")
+                        .build())
+                .build();
+
+        memberRepository.save(shopMember);
+
+        if (memberRepository.findByEmail("shop-test2@gmail.com").isEmpty()) {
+
+            memberRepository.save(Member.builder()
+                    .email("shop-test2@gmail.com")
+                    .password(passwordEncoder.encode("password"))
+                    .role(Role.ROLE_SHOP)
+                    .address(Address.builder()
+                            .city("서울시")
+                            .street("2번가")
+                            .zipcode("ㅇㅇ")
+                            .build())
+                    .build());
+        }
+
+        if (memberRepository.findByEmail("shop-test3@gmail.com").isEmpty()) {
+
+            memberRepository.save(Member.builder()
+                    .email("shop-test3@gmail.com")
+                    .password(passwordEncoder.encode("password"))
+                    .role(Role.ROLE_SHOP)
+                    .address(Address.builder()
+                            .city("서울시")
+                            .street("3번가")
+                            .zipcode("ㅇㅇ")
+                            .build())
+                    .build());
+        }
     }
 }

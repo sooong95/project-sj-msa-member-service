@@ -27,7 +27,7 @@ public class MemberJoinController {
         return new ResponseEntity<>("MEMBER 가입 성공!", CREATED);
     }
 
-    @PostMapping("/shop")
+    @PostMapping("/shop-member/join")
     public ResponseEntity<String> saveShop(@Valid @RequestBody ShopMemberJoinDto shopJoinDto) {
 
         memberService.shopMemberSave(shopJoinDto);

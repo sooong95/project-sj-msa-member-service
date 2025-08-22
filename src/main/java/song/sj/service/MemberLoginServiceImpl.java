@@ -54,7 +54,7 @@ public class MemberLoginServiceImpl implements MemberLoginService {
 
     private Map<String, Object> createTokenAndStoringTokenInRedis(Member member) {
         Map<String, Object> loginInfo = new HashMap<>();
-        String token = jwtTokenProvider.createToken(member.getEmail(), member.getRole().toString());
+        String token = jwtTokenProvider.createToken(member.getEmail(), member.getId(), member.getRole().toString());
         String refreshToken = jwtTokenProvider.createRefreshToken(member.getEmail(), member.getRole().toString());
         redisTemplate.opsForValue().set(member.getEmail(), refreshToken, 100, TimeUnit.DAYS);
 
@@ -100,7 +100,7 @@ public class MemberLoginServiceImpl implements MemberLoginService {
             throw new IllegalArgumentException("존재하지 않는 토큰 입니다");
         }
 
-        String token = jwtTokenProvider.createToken(claims.getSubject(), claims.get("role").toString());
+        String token = jwtTokenProvider.createToken(claims.getSubject(), (Long) claims.get("userId"), claims.get("role").toString());
         newToken.put("token", token);
 
         return newToken;

@@ -22,7 +22,7 @@ public class MemberLoginController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logout(@RequestHeader("X-User-Id") String email) {
+    public ResponseEntity<String> logout(@RequestHeader("X-User-Email") String email) {
         memberLoginService.logout(email);
 
         return new ResponseEntity<>("정상적으로 로그아웃 되셨습니다.", HttpStatus.OK);

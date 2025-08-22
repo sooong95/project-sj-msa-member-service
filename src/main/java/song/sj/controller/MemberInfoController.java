@@ -22,14 +22,14 @@ public class MemberInfoController {
     private final MemberQueryService memberQueryService;
 
     @PatchMapping
-    public ResponseEntity<String> updateMember(@RequestHeader("X-User-Id") String email, @RequestBody @Valid UpdateMemberDto updateMemberDto) {
+    public ResponseEntity<String> updateMember(@RequestHeader("X-User-Email") String email, @RequestBody @Valid UpdateMemberDto updateMemberDto) {
 
         memberService.updateMember(email, updateMemberDto);
         return new ResponseEntity<>("회원 정보가 수정 되었습니다.", HttpStatus.OK);
     }
 
     @DeleteMapping
-    public ResponseEntity<String> deleteMember(@RequestHeader("X-User-Id") String email, String password) {
+    public ResponseEntity<String> deleteMember(@RequestHeader("X-User-Email") String email, String password) {
 
         memberService.deleteMember(email, password);
 
@@ -37,7 +37,7 @@ public class MemberInfoController {
     }
 
     @GetMapping
-    public ResponseEntity<MemberSearchDto> findMember(@RequestHeader("X-User-Id") String email) {
+    public ResponseEntity<MemberSearchDto> findMember(@RequestHeader("X-User-Email") String email) {
         return new ResponseEntity<>((MemberSearchDto) memberService.findMember(email), HttpStatus.OK);
     }
 

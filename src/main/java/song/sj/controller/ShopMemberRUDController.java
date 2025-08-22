@@ -22,7 +22,7 @@ public class ShopMemberRUDController {
     private final MemberQueryService memberQueryService;
 
     @PatchMapping
-    public ResponseEntity<String> updateShopMember(@RequestHeader("X-User-Id") String email,
+    public ResponseEntity<String> updateShopMember(@RequestHeader("X-User-Email") String email,
                                                    @RequestBody @Valid UpdateShopMemberDto dto) {
 
         memberService.updateShopMember(email, dto);
@@ -30,7 +30,7 @@ public class ShopMemberRUDController {
     }
 
     @GetMapping
-    public ResponseEntity<ShopMemberSearchDto> findShopMember(@RequestHeader("X-User-Id") String email) {
+    public ResponseEntity<ShopMemberSearchDto> findShopMember(@RequestHeader("X-User-Email") String email) {
         return new ResponseEntity<>((ShopMemberSearchDto) memberService.findMember(email), HttpStatus.OK);
     }
 

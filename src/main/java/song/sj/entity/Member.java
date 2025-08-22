@@ -55,8 +55,9 @@ public class Member extends TimeStamp {
     @Builder.Default
     private List<Long> itemsId = new ArrayList<>();
 
-    @Builder.Default
-    private List<Long> shopIdList = new ArrayList<>();
+    // 굳이 member 쪽에서 shop 을 알 필요가 없음
+    /*@Builder.Default
+    private List<Long> shopIdList = new ArrayList<>();*/
 
     @Builder.Default
     private List<Long> reviewIdList = new ArrayList<>();

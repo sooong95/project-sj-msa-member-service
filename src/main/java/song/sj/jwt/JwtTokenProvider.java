@@ -6,6 +6,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import song.sj.dto.MemberRefreshTokenDto;
 
@@ -13,6 +14,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
 import java.util.Date;
 
+@RefreshScope
 @Component
 public class JwtTokenProvider {
     @Value("${jwt.expiration}")
@@ -37,8 +39,9 @@ public class JwtTokenProvider {
         ENCRYPT_RT_SECRET_KEY = new SecretKeySpec(java.util.Base64.getDecoder().decode(secretKeyRt), SignatureAlgorithm.HS512.getJcaName());
     }
 
-    public String createToken(String id, String role){
-        Claims claims = Jwts.claims().setSubject(id);
+    public String createToken(String email, Long userId, String role){
+        Claims claims = Jwts.claims().setSubject(email);
+        claims.put("userId", userId);
         claims.put("role", role);
         Date now = new Date();
         //        claims는 사용자정보(페이로드 정보)
